@@ -7,15 +7,15 @@ def get_xkcd_count():
     response = requests.get(url)
     response.raise_for_status()
 
-    json_data = response.json()
-    return json_data['num']
+    comic_data = response.json()
+    return comic_data['num']
 
 
-def get_xkcd_by_index(i):
-    url = f'https://xkcd.com/{i}/info.0.json'
+def get_xkcd_by_index(index):
+    url = f'https://xkcd.com/{index}/info.0.json'
 
     response = requests.get(url)
     response.raise_for_status()
 
-    json_data = response.json()
-    return json_data['img'], json_data['alt']
+    comic_data = response.json()
+    return comic_data['img'], comic_data['alt']
