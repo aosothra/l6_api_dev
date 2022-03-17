@@ -17,7 +17,6 @@ def save_wall_photo(vk_token, vk_group, photo_properties):
         'hash': photo_properties['hash']
     }
     result = call_vk_api('photos.saveWallPhoto', vk_token, params)[0]
-    print(result)
     return result['id'], result['owner_id']
 
 
