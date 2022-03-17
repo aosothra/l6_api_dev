@@ -9,9 +9,9 @@ def call_vk_api(method, access_token, params):
     response = requests.get(url, params=params)
     response.raise_for_status()
 
-    json_data = response.json()
+    data = response.json()
 
-    if json_data.get('error'):
-        raise RuntimeError(f"API Call failed - {json_data['error']['error_msg']}")
+    if data.get('error'):
+        raise RuntimeError(f"API Call failed - {data['error']['error_msg']}")
 
-    return json_data['response']
+    return data['response']
