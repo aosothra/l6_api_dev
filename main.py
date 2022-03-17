@@ -4,8 +4,8 @@ from random import Random
 import requests
 from dotenv import load_dotenv
 
+import vk_basic as vk
 from xkcd_fetcher import get_xkcd_count, get_xkcd_by_index
-from vk_basic import call_vk_api
 
 
 def download_image(url):
@@ -29,29 +29,13 @@ def upload_image(url):
 
 
 def post_image_to_vk(vk_token, vk_group, caption):
-    params = {
-        'group_id': vk_group
-    }
-    result = call_vk_api('photos.getWallUploadServer', vk_token, params)
-    upload_url = result['upload_url']
+    upload_url = vk.get_wall_upload_server(vk_token, vk_group)
 
-    result = upload_image(upload_url)
+    photo_properties = upload_image(upload_url)
 
-    params = {
-        'group_id': vk_group,
-        'photo': result['photo'],
-        'server': result['server'],
-        'hash': result['hash']
-    }
-    result = call_vk_api('photos.saveWallPhoto', vk_token, params)[0]
+    photo_id, owner_id = vk.save_wall_photo(vk_token, vk_group, photo_properties)
 
-    params = {
-        'owner_id': -vk_group,
-        'from_group': 1,
-        'message': caption,
-        'attachments': [f"photo{result['owner_id']}_{result['id']}"]
-    }
-    result = call_vk_api('wall.post', vk_token, params)
+    vk.wall_post(vk_token, vk_group, photo_id, owner_id, caption)
 
 
 def main():
@@ -59,10 +43,10 @@ def main():
     vk_token = os.getenv('VK_ACCESS_TOKEN')
     vk_group = int(os.getenv('VK_GROUP_ID'))
 
-    count = get_xkcd_count()
-    index = Random().randint(100, count)
+    comic_count = get_xkcd_count()
+    comic_index = Random().randint(100, comic_count)
 
-    comic_url, comic_caption = get_xkcd_by_index(index)
+    comic_url, comic_caption = get_xkcd_by_index(comic_index)
     download_image(comic_url)
 
     try:
